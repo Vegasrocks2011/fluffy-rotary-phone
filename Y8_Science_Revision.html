@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Y8 Science — End of Year Revision</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Literata:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --card: #1e2436;
+    --border: #2a3050;
+    --accent1: #5ee7c8;
+    --accent2: #f7c94b;
+    --accent3: #e05a78;
+    --accent4: #7b8fff;
+    --text: #e8eaf0;
+    --muted: #7a849e;
+    --correct: #3dd68c;
+    --wrong: #e05a78;
+    --radius: 12px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Literata', Georgia, serif;
+    font-size: 16px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    background: linear-gradient(135deg, #0d1520 0%, #141e35 50%, #0f1a2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 32px 20px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner { max-width: 960px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem; color: var(--accent1); letter-spacing: -0.5px; }
+  .logo span { color: var(--accent2); }
+  .score-pill { font-family: 'DM Mono', monospace; font-size: 0.85rem; background: var(--card); border: 1px solid var(--border); border-radius: 999px; padding: 6px 16px; color: var(--accent1); }
+
+  /* ── Tabs ── */
+  .tab-bar { background: var(--surface); border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-list { max-width: 960px; margin: auto; display: flex; gap: 2px; padding: 0 24px; }
+  .tab-btn {
+    font-family: 'Syne', sans-serif; font-size: 0.78rem; font-weight: 600;
+    padding: 14px 18px; border: none; background: transparent; color: var(--muted);
+    cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent;
+    transition: color 0.2s, border-color 0.2s; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent1); border-bottom-color: var(--accent1); }
+
+  /* ── Main layout ── */
+  main { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── Topic header ── */
+  .topic-header { margin-bottom: 32px; }
+  .topic-tag { font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2); margin-bottom: 6px; }
+  .topic-title { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; line-height: 1.1; }
+  .topic-subtitle { color: var(--muted); font-style: italic; margin-top: 6px; }
+
+  /* ── Question card ── */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 28px 24px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .q-num { font-family: 'DM Mono', monospace; font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px; }
+  .q-text { font-size: 1rem; margin-bottom: 18px; }
+  .q-text strong { color: var(--accent1); font-weight: 600; font-style: normal; }
+  .q-marks { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); float: right; }
+
+  /* MCQ */
+  .mcq-options { display: grid; gap: 8px; }
+  .mcq-btn {
+    display: block; width: 100%; text-align: left;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 12px 16px;
+    font-family: 'Literata', serif; font-size: 0.95rem; cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+  .mcq-btn:hover:not(:disabled) { background: #252d42; border-color: var(--accent4); }
+  .mcq-btn.correct { background: #1a3d2e; border-color: var(--correct); color: var(--correct); }
+  .mcq-btn.wrong { background: #3a1a22; border-color: var(--wrong); color: var(--wrong); }
+  .mcq-btn:disabled { cursor: default; }
+
+  /* Multi-select */
+  .multi-options { display: grid; gap: 8px; }
+  .multi-btn {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--surface); border: 1px solid var(--border);
+    color: var(--text); border-radius: 8px; padding: 12px 16px;
+    font-family: 'Literata', serif; font-size: 0.95rem; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .multi-btn .chk {
+    width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 4px;
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px;
+  }
+  .multi-btn.selected { border-color: var(--accent4); }
+  .multi-btn.selected .chk { border-color: var(--accent4); background: var(--accent4); color: #000; }
+  .multi-btn.correct { background: #1a3d2e; border-color: var(--correct); color: var(--correct); }
+  .multi-btn.correct .chk { border-color: var(--correct); background: var(--correct); color: #000; }
+  .multi-btn.wrong { background: #3a1a22; border-color: var(--wrong); color: var(--wrong); }
+  .multi-btn:disabled { cursor: default; }
+  .multi-submit { margin-top: 10px; }
+
+  /* Matching */
+  .match-container { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .match-col-label { font-family: 'DM Mono', monospace; font-size: 0.7rem; text-transform: uppercase; color: var(--muted); letter-spacing: 0.1em; margin-bottom: 6px; }
+  .match-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 11px 14px; font-size: 0.9rem;
+    cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .match-item:hover:not(.matched):not(.disabled) { border-color: var(--accent4); }
+  .match-item.selected-left { border-color: var(--accent2); background: #2a2514; }
+  .match-item.matched { border-color: var(--correct); background: #1a3d2e; color: var(--correct); cursor: default; }
+  .match-item.wrong-match { border-color: var(--wrong); background: #3a1a22; color: var(--wrong); }
+  .match-item.disabled { cursor: default; opacity: 0.6; }
+
+  /* Fill in the blanks */
+  .fill-text { font-size: 1rem; line-height: 2.2; }
+  .blank {
+    display: inline-block; min-width: 140px; border-bottom: 2px solid var(--accent4);
+    background: transparent; color: var(--text); font-family: 'Literata', serif;
+    font-size: 0.95rem; padding: 2px 8px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .blank:focus { border-color: var(--accent1); }
+  .blank.correct { border-color: var(--correct); color: var(--correct); }
+  .blank.wrong { border-color: var(--wrong); color: var(--wrong); }
+  .word-bank { display: flex; flex-wrap: wrap; gap: 8px; margin: 14px 0 10px; }
+  .word-chip {
+    font-family: 'DM Mono', monospace; font-size: 0.8rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 999px; padding: 4px 14px; color: var(--muted);
+    cursor: pointer; transition: all 0.15s;
+  }
+  .word-chip:hover { border-color: var(--accent4); color: var(--text); }
+  .word-chip.used { opacity: 0.3; cursor: default; text-decoration: line-through; }
+
+  /* Short answer */
+  .short-answer {
+    width: 100%; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; color: var(--text); font-family: 'Literata', serif;
+    font-size: 0.95rem; padding: 12px 14px; resize: vertical; min-height: 70px;
+    outline: none; transition: border-color 0.2s;
+  }
+  .short-answer:focus { border-color: var(--accent4); }
+
+  /* Buttons */
+  .btn {
+    font-family: 'Syne', sans-serif; font-weight: 600; font-size: 0.8rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    border: none; border-radius: 8px; padding: 10px 20px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-primary { background: var(--accent1); color: #0a1a15; }
+  .btn-primary:hover { filter: brightness(1.1); }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn-ghost:hover { border-color: var(--text); color: var(--text); }
+  .btn-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+
+  /* Feedback */
+  .feedback {
+    display: none; margin-top: 14px; padding: 14px 16px;
+    border-radius: 8px; font-size: 0.92rem; line-height: 1.55;
+  }
+  .feedback.show { display: block; animation: fadeUp 0.25s ease; }
+  .feedback.correct-fb { background: #1a3d2e; border: 1px solid var(--correct); color: var(--correct); }
+  .feedback.wrong-fb { background: #3a1a22; border: 1px solid var(--wrong); color: var(--wrong); }
+  .feedback .model-answer { color: var(--text); margin-top: 8px; font-style: italic; }
+  .feedback .model-answer strong { color: var(--accent1); }
+
+  /* ── Score panel ── */
+  .score-panel { }
+  .score-hero {
+    background: linear-gradient(135deg, var(--card), #1a2040);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 40px; text-align: center; margin-bottom: 32px;
+  }
+  .score-big { font-family: 'Syne', sans-serif; font-size: 4rem; font-weight: 800; color: var(--accent1); line-height: 1; }
+  .score-label { font-family: 'DM Mono', monospace; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 8px; }
+  .score-bar-wrap { max-width: 320px; margin: 20px auto 0; background: var(--border); border-radius: 999px; height: 8px; }
+  .score-bar { height: 8px; border-radius: 999px; background: linear-gradient(90deg, var(--accent1), var(--accent2)); transition: width 1s ease; }
+  .topic-scores { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .topic-score-card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px; display: flex; flex-direction: column; gap: 8px;
+  }
+  .ts-name { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 600; }
+  .ts-val { font-family: 'DM Mono', monospace; font-size: 1.5rem; font-weight: 500; color: var(--accent1); }
+  .ts-bar-wrap { background: var(--border); border-radius: 999px; height: 4px; }
+  .ts-bar { height: 4px; border-radius: 999px; background: var(--accent1); transition: width 1s ease; }
+  .reset-btn-wrap { text-align: center; margin-top: 32px; }
+
+  /* ── Answers tab ── */
+  .answers-section { margin-bottom: 32px; }
+  .answers-topic { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; color: var(--accent2); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .answer-row { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid #1e2436; font-size: 0.9rem; }
+  .answer-qnum { font-family: 'DM Mono', monospace; color: var(--muted); min-width: 50px; }
+  .answer-text strong { color: var(--accent1); }
+
+  /* Table styling */
+  .data-table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 0.88rem; }
+  .data-table th { background: #252d42; color: var(--accent1); font-family: 'DM Mono', monospace; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.07em; padding: 8px 12px; border: 1px solid var(--border); }
+  .data-table td { padding: 8px 12px; border: 1px solid var(--border); }
+  .data-table tr:nth-child(even) td { background: #181d2c; }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .match-container { grid-template-columns: 1fr; }
+    .topic-title { font-size: 1.5rem; }
+    main { padding: 24px 16px 60px; }
+    .q-card { padding: 20px 18px; }
+    .tab-btn { padding: 12px 12px; font-size: 0.72rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Y8 Science <span>Revision</span></div>
+    <div class="score-pill" id="headerScore">Score: 0 / 0 attempted</div>
+  </div>
+</header>
+
+<div class="tab-bar">
+  <div class="tab-list">
+    <button class="tab-btn active" onclick="switchTab('t1')">🌸 Plant Repro</button>
+    <button class="tab-btn" onclick="switchTab('t2')">🔥 Combustion</button>
+    <button class="tab-btn" onclick="switchTab('t3')">💡 Light</button>
+    <button class="tab-btn" onclick="switchTab('t4')">🥦 Food & Nutrition</button>
+    <button class="tab-btn" onclick="switchTab('t5')">⚗️ Metals</button>
+    <button class="tab-btn" onclick="switchTab('t6')">🫁 Breathing</button>
+    <button class="tab-btn" onclick="switchTab('t7')">🪐 Earth & Space</button>
+    <button class="tab-btn" onclick="switchTab('score')">📊 Score</button>
+    <button class="tab-btn" onclick="switchTab('answers')">✅ Answers</button>
+  </div>
+</div>
+
+<main>
+
+<!-- ═══════════════════════════════════════════
+     TAB 1 — PLANT REPRODUCTION
+═══════════════════════════════════════════ -->
+<div class="tab-panel active" id="t1">
+  <div class="topic-header">
+    <div class="topic-tag">Topic 1</div>
+    <div class="topic-title">Plant Reproduction</div>
+    <div class="topic-subtitle">Pollination, fertilisation & seed production</div>
+  </div>
+
+  <!-- Q1.1 MCQ: Label matching -->
+  <div class="q-card" id="card-1-1">
+    <div class="q-num">Question 1 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">
+      A flower has three labelled parts: <strong>P</strong>, <strong>Q</strong>, and <strong>R</strong>.
+      Which label points to the part of the flower where <strong>pollen is produced</strong>?
+    </div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'1-1','A')">A — Stigma</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'1-1','B')">B — Anther</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'1-1','C')">C — Ovule</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'1-1','D')">D — Sepal</button>
+    </div>
+    <div class="feedback" id="fb-1-1"></div>
+  </div>
+
+  <!-- Q1.2 Fill in blanks -->
+  <div class="q-card" id="card-1-2">
+    <div class="q-num">Question 2 of 3 <span class="q-marks">3 marks</span></div>
+    <div class="q-text">Complete the sentences about pollination and fertilisation using the words below.</div>
+    <div class="word-bank" id="wb-1-2">
+      <span class="word-chip" onclick="useWord(this,'1-2')">stigma</span>
+      <span class="word-chip" onclick="useWord(this,'1-2')">pollination</span>
+      <span class="word-chip" onclick="useWord(this,'1-2')">fertilisation</span>
+      <span class="word-chip" onclick="useWord(this,'1-2')">anthers</span>
+      <span class="word-chip" onclick="useWord(this,'1-2')">ovule</span>
+      <span class="word-chip" onclick="useWord(this,'1-2')">germination</span>
+    </div>
+    <div class="fill-text">
+      Pollen grains are made in the <input class="blank" id="b-1-2-1" data-answer="anthers" placeholder="________"> of a flower.
+      When pollen lands on the <input class="blank" id="b-1-2-2" data-answer="stigma" placeholder="________"> of another flower, this is called
+      <input class="blank" id="b-1-2-3" data-answer="pollination" placeholder="________">.
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="checkFill('1-2', ['b-1-2-1','b-1-2-2','b-1-2-3'])">Check answers</button>
+      <button class="btn btn-ghost" onclick="resetFill('1-2', ['b-1-2-1','b-1-2-2','b-1-2-3'])">Reset</button>
+    </div>
+    <div class="feedback" id="fb-1-2"></div>
+  </div>
+
+  <!-- Q1.3 MCQ -->
+  <div class="q-card" id="card-1-3">
+    <div class="q-num">Question 3 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">After fertilisation, the <strong>ovule</strong> develops into a ______. Tick the correct answer.</div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'1-3','A')">A — Petal</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'1-3','B')">B — Seed</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'1-3','C')">C — Root</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'1-3','D')">D — Sepal</button>
+    </div>
+    <div class="feedback" id="fb-1-3"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 2 — COMBUSTION
+═══════════════════════════════════════════ -->
+<div class="tab-panel" id="t2">
+  <div class="topic-header">
+    <div class="topic-tag">Topic 2</div>
+    <div class="topic-title">Combustion</div>
+    <div class="topic-subtitle">Fuels, products of burning & pollution</div>
+  </div>
+
+  <!-- Q2.1 MCQ -->
+  <div class="q-card">
+    <div class="q-num">Question 1 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">
+      The table shows three fuels: wood (solid, 16 000 kJ/kg), diesel (liquid, 45 000 kJ/kg), and hydrogen (gas, 142 000 kJ/kg).
+      Which fuel releases the <strong>most</strong> energy per kilogram?
+    </div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'2-1','A')">A — Wood</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'2-1','B')">B — Diesel</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'2-1','C')">C — Hydrogen</button>
+    </div>
+    <div class="feedback" id="fb-2-1"></div>
+  </div>
+
+  <!-- Q2.2 Multi-select -->
+  <div class="q-card">
+    <div class="q-num">Question 2 of 3 <span class="q-marks">2 marks</span></div>
+    <div class="q-text">Tick the <strong>two</strong> gases that are considered air pollutants from burning fuels.</div>
+    <div class="multi-options" id="multi-2-2">
+      <button class="multi-btn" onclick="toggleMulti(this)"><span class="chk"></span>Carbon dioxide</button>
+      <button class="multi-btn" onclick="toggleMulti(this)"><span class="chk"></span>Sulphur dioxide</button>
+      <button class="multi-btn" onclick="toggleMulti(this)"><span class="chk"></span>Nitrogen (N₂)</button>
+      <button class="multi-btn" onclick="toggleMulti(this)"><span class="chk"></span>Carbon monoxide</button>
+    </div>
+    <div class="btn-row multi-submit">
+      <button class="btn btn-primary" onclick="checkMulti('2-2', ['Sulphur dioxide','Carbon monoxide'])">Check answers</button>
+    </div>
+    <div class="feedback" id="fb-2-2"></div>
+  </div>
+
+  <!-- Q2.3 Short answer -->
+  <div class="q-card">
+    <div class="q-num">Question 3 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">Define the term <strong>'hydrocarbon'</strong>.</div>
+    <textarea class="short-answer" id="sa-2-3" placeholder="Write your answer here…"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="revealAnswer('2-3')">Show model answer</button>
+    </div>
+    <div class="feedback" id="fb-2-3"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 3 — LIGHT
+═══════════════════════════════════════════ -->
+<div class="tab-panel" id="t3">
+  <div class="topic-header">
+    <div class="topic-tag">Topic 3</div>
+    <div class="topic-title">Light</div>
+    <div class="topic-subtitle">Reflection, refraction & the law of reflection</div>
+  </div>
+
+  <!-- Q3.1 MCQ -->
+  <div class="q-card">
+    <div class="q-num">Question 1 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">
+      The law of reflection states that the angle of incidence equals the angle of reflection.
+      Both angles are measured from the <strong>normal</strong>. What is the normal?
+    </div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'3-1','A')">A — The surface of the mirror</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'3-1','B')">B — A line along the mirror surface</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'3-1','C')">C — A line at 90° to the mirror surface at the point of incidence</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'3-1','D')">D — The reflected ray</button>
+    </div>
+    <div class="feedback" id="fb-3-1"></div>
+  </div>
+
+  <!-- Q3.2 MCQ -->
+  <div class="q-card">
+    <div class="q-num">Question 2 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">
+      A mirror is tilted forwards by 10°. What happens to the reflected ray?
+    </div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'3-2','A')">A — It stays in the same position</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'3-2','B')">B — It disappears</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'3-2','C')">C — It changes direction / moves to a different position</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'3-2','D')">D — It becomes brighter</button>
+    </div>
+    <div class="feedback" id="fb-3-2"></div>
+  </div>
+
+  <!-- Q3.3 Short answer -->
+  <div class="q-card">
+    <div class="q-num">Question 3 of 3 <span class="q-marks">2 marks</span></div>
+    <div class="q-text">Explain the difference between a <strong>luminous</strong> object and a <strong>non-luminous</strong> object. Give one example of each.</div>
+    <textarea class="short-answer" id="sa-3-3" placeholder="Write your answer here…"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="revealAnswer('3-3')">Show model answer</button>
+    </div>
+    <div class="feedback" id="fb-3-3"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 4 — FOOD & NUTRITION
+═══════════════════════════════════════════ -->
+<div class="tab-panel" id="t4">
+  <div class="topic-header">
+    <div class="topic-tag">Topic 4</div>
+    <div class="topic-title">Food & Nutrition</div>
+    <div class="topic-subtitle">Nutrients, digestion & food tests</div>
+  </div>
+
+  <!-- Q4.1 MCQ -->
+  <div class="q-card">
+    <div class="q-num">Question 1 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">Which food is the <strong>best</strong> source of vitamin C?</div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'4-1','A')">A — Cheese</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'4-1','B')">B — Chicken</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'4-1','C')">C — Kiwi fruit</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'4-1','D')">D — Butter</button>
+    </div>
+    <div class="feedback" id="fb-4-1"></div>
+  </div>
+
+  <!-- Q4.2 Matching -->
+  <div class="q-card">
+    <div class="q-num">Question 2 of 3 <span class="q-marks">4 marks</span></div>
+    <div class="q-text">Match each nutrient to a good food source. Click a nutrient, then click its matching food source.</div>
+    <div class="match-container">
+      <div>
+        <div class="match-col-label">Nutrient</div>
+        <div class="match-item" id="ml-starch" onclick="selectLeft(this,'starch')">Starch</div>
+        <div class="match-item" id="ml-fat" onclick="selectLeft(this,'fat')" style="margin-top:8px">Fat</div>
+        <div class="match-item" id="ml-protein" onclick="selectLeft(this,'protein')" style="margin-top:8px">Protein</div>
+        <div class="match-item" id="ml-sugar" onclick="selectLeft(this,'sugar')" style="margin-top:8px">Sugar</div>
+      </div>
+      <div>
+        <div class="match-col-label">Food Source</div>
+        <div class="match-item" id="mr-lentils" onclick="selectRight(this,'lentils')">Lentils</div>
+        <div class="match-item" id="mr-honey" onclick="selectRight(this,'honey')" style="margin-top:8px">Honey</div>
+        <div class="match-item" id="mr-bread" onclick="selectRight(this,'bread')" style="margin-top:8px">Bread</div>
+        <div class="match-item" id="mr-butter" onclick="selectRight(this,'butter')" style="margin-top:8px">Butter</div>
+      </div>
+    </div>
+    <div class="feedback" id="fb-4-2" style="margin-top:12px"></div>
+  </div>
+
+  <!-- Q4.3 MCQ -->
+  <div class="q-card">
+    <div class="q-num">Question 3 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">Why does the human body need <strong>calcium</strong>?</div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'4-3','A')">A — To make haemoglobin in red blood cells</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'4-3','B')">B — To build and maintain strong bones and teeth</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'4-3','C')">C — To digest protein</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'4-3','D')">D — To provide energy</button>
+    </div>
+    <div class="feedback" id="fb-4-3"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 5 — METALS
+═══════════════════════════════════════════ -->
+<div class="tab-panel" id="t5">
+  <div class="topic-header">
+    <div class="topic-tag">Topic 5</div>
+    <div class="topic-title">Metals</div>
+    <div class="topic-subtitle">Properties, reactions & the periodic table</div>
+  </div>
+
+  <!-- Q5.1 Multi-select -->
+  <div class="q-card">
+    <div class="q-num">Question 1 of 3 <span class="q-marks">2 marks</span></div>
+    <div class="q-text">Select <strong>two</strong> properties that show a substance is a metal.</div>
+    <div class="multi-options" id="multi-5-1">
+      <button class="multi-btn" onclick="toggleMulti(this)"><span class="chk"></span>It is a good conductor of electricity</button>
+      <button class="multi-btn" onclick="toggleMulti(this)"><span class="chk"></span>It is transparent</button>
+      <button class="multi-btn" onclick="toggleMulti(this)"><span class="chk"></span>It has a shiny lustre (shiny surface)</button>
+      <button class="multi-btn" onclick="toggleMulti(this)"><span class="chk"></span>It has a very low melting point</button>
+    </div>
+    <div class="btn-row multi-submit">
+      <button class="btn btn-primary" onclick="checkMulti('5-1', ['It is a good conductor of electricity','It has a shiny lustre (shiny surface)'])">Check answers</button>
+    </div>
+    <div class="feedback" id="fb-5-1"></div>
+  </div>
+
+  <!-- Q5.2 MCQ -->
+  <div class="q-card">
+    <div class="q-num">Question 2 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">When copper metal is heated in air, it reacts with oxygen. What is the chemical name of the product formed?</div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'5-2','A')">A — Copper chloride</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'5-2','B')">B — Copper oxide</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'5-2','C')">C — Copper carbonate</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'5-2','D')">D — Copper sulfate</button>
+    </div>
+    <div class="feedback" id="fb-5-2"></div>
+  </div>
+
+  <!-- Q5.3 MCQ chemical vs physical -->
+  <div class="q-card">
+    <div class="q-num">Question 3 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">Which statement describes what happens in a <strong>chemical change</strong> but <em>not</em> in a physical change?</div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'5-3','A')">A — The product is always a solid</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'5-3','B')">B — The change only happens at high temperature</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'5-3','C')">C — Atoms have combined differently to make a new substance</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'5-3','D')">D — The types of atoms at the start are the same as in the end product</button>
+    </div>
+    <div class="feedback" id="fb-5-3"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 6 — BREATHING & RESPIRATION
+═══════════════════════════════════════════ -->
+<div class="tab-panel" id="t6">
+  <div class="topic-header">
+    <div class="topic-tag">Topic 6</div>
+    <div class="topic-title">Breathing &amp; Respiration</div>
+    <div class="topic-subtitle">Mechanism of breathing, lungs & gas exchange</div>
+  </div>
+
+  <!-- Q6.1 MCQ -->
+  <div class="q-card">
+    <div class="q-num">Question 1 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">
+      In a bell-jar model of breathing, a rubber sheet represents a body part. When the sheet is pulled down, the balloons inflate.
+      Which part of the respiratory system does the rubber sheet represent?
+    </div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'6-1','A')">A — Trachea</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'6-1','B')">B — Ribcage</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'6-1','C')">C — Diaphragm</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'6-1','D')">D — Bronchus</button>
+    </div>
+    <div class="feedback" id="fb-6-1"></div>
+  </div>
+
+  <!-- Q6.2 MCQ -->
+  <div class="q-card">
+    <div class="q-num">Question 2 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">Why does air rush into the lungs when the diaphragm contracts and moves downward?</div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'6-2','A')">A — The lungs actively suck air in</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'6-2','B')">B — The chest volume increases, reducing pressure inside, so air moves in from outside</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'6-2','C')">C — The ribcage pushes air through the trachea</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'6-2','D')">D — Oxygen is heavier than air so it falls into the lungs</button>
+    </div>
+    <div class="feedback" id="fb-6-2"></div>
+  </div>
+
+  <!-- Q6.3 Short answer -->
+  <div class="q-card">
+    <div class="q-num">Question 3 of 3 <span class="q-marks">2 marks</span></div>
+    <div class="q-text">In the bell-jar model, what would happen to the balloons if the rubber sheet were <strong>released</strong>? Explain your answer.</div>
+    <textarea class="short-answer" id="sa-6-3" placeholder="Write your answer here…"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="revealAnswer('6-3')">Show model answer</button>
+    </div>
+    <div class="feedback" id="fb-6-3"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 7 — EARTH & SPACE
+═══════════════════════════════════════════ -->
+<div class="tab-panel" id="t7">
+  <div class="topic-header">
+    <div class="topic-tag">Topic 7</div>
+    <div class="topic-title">Earth &amp; Space</div>
+    <div class="topic-subtitle">Solar system, planets & classification</div>
+  </div>
+
+  <!-- Q7.1 MCQ -->
+  <div class="q-card">
+    <div class="q-num">Question 1 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">
+      Using the table below, which planet has the <strong>largest</strong> diameter?
+      <table class="data-table" style="margin-top:12px">
+        <tr><th>Planet</th><th>Diameter (km)</th></tr>
+        <tr><td>Earth</td><td>12 800</td></tr>
+        <tr><td>Mars</td><td>6 800</td></tr>
+        <tr><td>Jupiter</td><td>142 600</td></tr>
+        <tr><td>Neptune</td><td>50 000</td></tr>
+      </table>
+    </div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'7-1','A')">A — Earth</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'7-1','B')">B — Mars</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'7-1','C')">C — Jupiter</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'7-1','D')">D — Neptune</button>
+    </div>
+    <div class="feedback" id="fb-7-1"></div>
+  </div>
+
+  <!-- Q7.2 MCQ Pluto -->
+  <div class="q-card">
+    <div class="q-num">Question 2 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">Pluto has a diameter of only 2 300 km. How does this information suggest to scientists that Pluto is <strong>not</strong> a planet?</div>
+    <div class="mcq-options">
+      <button class="mcq-btn" onclick="checkMCQ(this,'7-2','A')">A — It is much smaller than all the recognised planets</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'7-2','B')">B — It is made of rock</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'7-2','C')">C — It has a moon</button>
+      <button class="mcq-btn" onclick="checkMCQ(this,'7-2','D')">D — It orbits the Sun</button>
+    </div>
+    <div class="feedback" id="fb-7-2"></div>
+  </div>
+
+  <!-- Q7.3 Short answer -->
+  <div class="q-card">
+    <div class="q-num">Question 3 of 3 <span class="q-marks">1 mark</span></div>
+    <div class="q-text">
+      The table shows the atmosphere of various objects in our solar system. Atmosphere is <strong>not</strong> used to classify objects as moons or planets.
+      <table class="data-table" style="margin-top:10px;margin-bottom:10px">
+        <tr><th>Object</th><th>Atmosphere</th></tr>
+        <tr><td>Mercury</td><td>None</td></tr>
+        <tr><td>Earth</td><td>Nitrogen &amp; oxygen</td></tr>
+        <tr><td>Earth's Moon</td><td>None</td></tr>
+        <tr><td>Titan (a moon)</td><td>Nitrogen &amp; methane</td></tr>
+        <tr><td>Pluto</td><td>Nitrogen &amp; methane</td></tr>
+      </table>
+      Using the information above, suggest <strong>one reason</strong> why atmosphere cannot be used to classify objects as moons or planets.
+    </div>
+    <textarea class="short-answer" id="sa-7-3" placeholder="Write your answer here…"></textarea>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="revealAnswer('7-3')">Show model answer</button>
+    </div>
+    <div class="feedback" id="fb-7-3"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SCORE TAB
+═══════════════════════════════════════════ -->
+<div class="tab-panel" id="score">
+  <div class="topic-header">
+    <div class="topic-tag">Results</div>
+    <div class="topic-title">Your Score</div>
+    <div class="topic-subtitle">Based on auto-marked questions attempted so far</div>
+  </div>
+  <div class="score-hero">
+    <div class="score-big" id="totalScoreDisplay">0</div>
+    <div class="score-label" id="totalScoreLabel">out of 0 marks attempted</div>
+    <div class="score-bar-wrap">
+      <div class="score-bar" id="totalScoreBar" style="width:0%"></div>
+    </div>
+  </div>
+  <div class="topic-scores" id="topicScoresGrid"></div>
+  <div class="reset-btn-wrap">
+    <button class="btn btn-ghost" onclick="resetAll()">🔄 Reset all answers</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     ANSWERS TAB
+═══════════════════════════════════════════ -->
+<div class="tab-panel" id="answers">
+  <div class="topic-header">
+    <div class="topic-tag">Mark Scheme</div>
+    <div class="topic-title">Model Answers</div>
+    <div class="topic-subtitle">Use these to check your open-ended responses</div>
+  </div>
+
+  <div class="answers-section">
+    <div class="answers-topic">🌸 Plant Reproduction</div>
+    <div class="answer-row"><div class="answer-qnum">Q1</div><div class="answer-text"><strong>B — Anther.</strong> Pollen is produced in the anthers, the male parts of the flower.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q2</div><div class="answer-text"><strong>anthers / stigma / pollination.</strong> The complete process: pollen made in anthers → lands on stigma → this is pollination → a tube grows → nucleus fuses with ovule = fertilisation.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q3</div><div class="answer-text"><strong>B — Seed.</strong> After fertilisation, the ovule develops into a seed and the ovary wall develops into a fruit.</div></div>
+  </div>
+
+  <div class="answers-section">
+    <div class="answers-topic">🔥 Combustion</div>
+    <div class="answer-row"><div class="answer-qnum">Q1</div><div class="answer-text"><strong>C — Hydrogen</strong> (142 000 kJ/kg), which is far higher than diesel or wood.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q2</div><div class="answer-text"><strong>Sulphur dioxide</strong> and <strong>carbon monoxide</strong> are both air pollutants. Carbon dioxide contributes to climate change but nitrogen is not a pollutant.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q3</div><div class="answer-text"><strong>A hydrocarbon</strong> is a compound that contains <strong>only hydrogen and carbon atoms</strong>. (Examples: methane, propane, petrol.)</div></div>
+  </div>
+
+  <div class="answers-section">
+    <div class="answers-topic">💡 Light</div>
+    <div class="answer-row"><div class="answer-qnum">Q1</div><div class="answer-text"><strong>C</strong> — The normal is a line drawn at 90° (perpendicular) to the mirror surface at the point where the ray hits.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q2</div><div class="answer-text"><strong>C</strong> — When the mirror tilts, the normal tilts with it, so the reflected ray changes direction and moves to a new position.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q3</div><div class="answer-text"><strong>Luminous objects</strong> produce their own light (e.g. the Sun, a torch). <strong>Non-luminous objects</strong> do not produce their own light — we see them because they reflect light (e.g. the Moon, a book).</div></div>
+  </div>
+
+  <div class="answers-section">
+    <div class="answers-topic">🥦 Food & Nutrition</div>
+    <div class="answer-row"><div class="answer-qnum">Q1</div><div class="answer-text"><strong>C — Kiwi fruit</strong> (vitamin C is found in citrus fruits, berries, and green vegetables, not cheese or butter).</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q2</div><div class="answer-text"><strong>Starch → Bread; Fat → Butter; Protein → Lentils; Sugar → Honey.</strong></div></div>
+    <div class="answer-row"><div class="answer-qnum">Q3</div><div class="answer-text"><strong>B</strong> — Calcium is needed to build and maintain strong bones and teeth.</div></div>
+  </div>
+
+  <div class="answers-section">
+    <div class="answers-topic">⚗️ Metals</div>
+    <div class="answer-row"><div class="answer-qnum">Q1</div><div class="answer-text"><strong>Conducts electricity</strong> and <strong>has a shiny lustre.</strong> Other metallic properties: high melting point, malleable, good conductor of heat.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q2</div><div class="answer-text"><strong>B — Copper oxide.</strong> Copper + oxygen → copper oxide. (2Cu + O₂ → 2CuO)</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q3</div><div class="answer-text"><strong>C</strong> — In a chemical change, atoms rearrange to form a new substance with different properties. In a physical change, no new substance is made.</div></div>
+  </div>
+
+  <div class="answers-section">
+    <div class="answers-topic">🫁 Breathing & Respiration</div>
+    <div class="answer-row"><div class="answer-qnum">Q1</div><div class="answer-text"><strong>C — Diaphragm.</strong> The dome-shaped muscle at the base of the chest cavity.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q2</div><div class="answer-text"><strong>B</strong> — The diaphragm flattening increases the volume of the chest cavity, which decreases the air pressure inside, so air moves in from outside where pressure is higher.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q3</div><div class="answer-text">The balloons would <strong>deflate</strong>. When the rubber sheet is released it moves back up, <strong>decreasing the volume</strong> of the bell jar. This <strong>increases the pressure</strong> inside, pushing air back out of the balloons (like exhalation).</div></div>
+  </div>
+
+  <div class="answers-section">
+    <div class="answers-topic">🪐 Earth & Space</div>
+    <div class="answer-row"><div class="answer-qnum">Q1</div><div class="answer-text"><strong>C — Jupiter</strong> (142 600 km diameter).</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q2</div><div class="answer-text"><strong>A</strong> — Pluto's diameter (2 300 km) is much smaller than all recognised planets; even Mercury (4 800 km) is twice as large.</div></div>
+    <div class="answer-row"><div class="answer-qnum">Q3</div><div class="answer-text">Some moons (e.g. Titan) have atmospheres similar to Pluto's, and some planets (e.g. Mercury) have no atmosphere, so <strong>atmosphere alone does not distinguish planets from moons</strong>.</div></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════
+// State
+// ══════════════════════════════════════
+const scores = {};  // qid -> { earned, max }
+const answered = new Set();
+
+// MCQ correct answers
+const mcqAnswers = {
+  '1-1': 'B', '1-3': 'B',
+  '2-1': 'C',
+  '3-1': 'C', '3-2': 'C',
+  '4-1': 'C', '4-3': 'B',
+  '5-2': 'B', '5-3': 'C',
+  '6-1': 'C', '6-2': 'B',
+  '7-1': 'C', '7-2': 'A',
+};
+
+const mcqFeedback = {
+  '1-1': { correct: 'Correct! Pollen is produced in the anthers.', wrong: 'Not quite. Pollen is produced in the <strong>anthers</strong> (B), the male parts of the flower.' },
+  '1-3': { correct: 'Correct! The ovule develops into a seed after fertilisation.', wrong: 'Not quite. After fertilisation the ovule develops into a <strong>seed</strong> (B).' },
+  '2-1': { correct: 'Correct! Hydrogen releases 142 000 kJ/kg — far more than the others.', wrong: 'Not quite. <strong>Hydrogen</strong> (C) releases the most energy per kilogram (142 000 kJ/kg).' },
+  '3-1': { correct: 'Correct! The normal is a line at 90° to the mirror surface at the point of incidence.', wrong: 'Not quite. The normal is a line <strong>perpendicular (90°) to the mirror surface</strong> at the point where the ray hits (C).' },
+  '3-2': { correct: 'Correct! Tilting the mirror changes the angle of the normal, so the reflected ray moves to a new position.', wrong: 'Not quite. When the mirror tilts the reflected ray <strong>changes direction / moves</strong> (C), because the normal tilts with the mirror.' },
+  '4-1': { correct: 'Correct! Kiwi fruit (and citrus fruits) are excellent sources of vitamin C.', wrong: 'Not quite. <strong>Kiwi fruit</strong> (C) is a good source of vitamin C. Cheese contains calcium; chicken and butter have very little vitamin C.' },
+  '4-3': { correct: 'Correct! Calcium builds and maintains strong bones and teeth.', wrong: 'Not quite. Calcium is needed to <strong>build and maintain strong bones and teeth</strong> (B).' },
+  '5-2': { correct: 'Correct! Copper + oxygen → copper oxide (CuO).', wrong: 'Not quite. When copper reacts with oxygen, <strong>copper oxide</strong> (B) is formed.' },
+  '5-3': { correct: 'Correct! In a chemical change, atoms rearrange to form a completely new substance.', wrong: 'Not quite. The key difference is that in a chemical change <strong>atoms recombine to form a new substance</strong> (C).' },
+  '6-1': { correct: 'Correct! The rubber sheet represents the diaphragm.', wrong: 'Not quite. The rubber sheet represents the <strong>diaphragm</strong> (C), the muscle at the base of the chest cavity.' },
+  '6-2': { correct: 'Correct! The increased volume reduces air pressure, so air rushes in from outside.', wrong: 'Not quite. When the diaphragm contracts, chest volume increases, <strong>reducing the internal air pressure</strong>, so air moves in from outside (B).' },
+  '7-1': { correct: 'Correct! Jupiter is by far the largest planet, with a diameter of 142 600 km.', wrong: 'Not quite. <strong>Jupiter</strong> (C) is the largest at 142 600 km diameter.' },
+  '7-2': { correct: 'Correct! Pluto is much smaller than any of the recognised planets.', wrong: 'Not quite. Pluto\'s tiny diameter (2 300 km) means it is <strong>much smaller than all recognised planets</strong> (A).' },
+};
+
+// ══════════════════════════════════════
+// Tab switching
+// ══════════════════════════════════════
+function switchTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = ['t1','t2','t3','t4','t5','t6','t7','score','answers'].indexOf(id);
+  document.querySelectorAll('.tab-btn')[idx].classList.add('active');
+  if (id === 'score') updateScorePanel();
+}
+
+// ══════════════════════════════════════
+// MCQ
+// ══════════════════════════════════════
+function checkMCQ(btn, qid, choice) {
+  if (answered.has(qid)) return;
+  answered.add(qid);
+  const correct = mcqAnswers[qid];
+  const btns = btn.closest('.mcq-options').querySelectorAll('.mcq-btn');
+  btns.forEach(b => b.disabled = true);
+  const fb = document.getElementById('fb-' + qid);
+  const info = mcqFeedback[qid];
+  if (choice === correct) {
+    btn.classList.add('correct');
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = '✅ ' + info.correct;
+    recordScore(qid, 1, 1);
+  } else {
+    btn.classList.add('wrong');
+    // highlight correct
+    btns.forEach(b => { if (b.textContent.startsWith(correct)) b.classList.add('correct'); });
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = '❌ ' + info.wrong;
+    recordScore(qid, 0, 1);
+  }
+  updateHeader();
+}
+
+// ══════════════════════════════════════
+// Multi-select
+// ══════════════════════════════════════
+function toggleMulti(btn) {
+  if (btn.disabled) return;
+  btn.classList.toggle('selected');
+  btn.querySelector('.chk').textContent = btn.classList.contains('selected') ? '✓' : '';
+}
+
+function checkMulti(qid, correctAnswers) {
+  if (answered.has(qid)) return;
+  answered.add(qid);
+  const container = document.getElementById('multi-' + qid);
+  const btns = container.querySelectorAll('.multi-btn');
+  let earned = 0;
+  const maxMarks = correctAnswers.length;
+  btns.forEach(btn => {
+    btn.disabled = true;
+    const label = btn.textContent.trim().replace('✓','').trim();
+    const isCorrect = correctAnswers.includes(label);
+    const isSelected = btn.classList.contains('selected');
+    if (isCorrect && isSelected) { btn.classList.add('correct'); btn.querySelector('.chk').textContent = '✓'; earned++; }
+    else if (isCorrect && !isSelected) { btn.classList.add('correct'); btn.querySelector('.chk').textContent = '✓'; }
+    else if (!isCorrect && isSelected) { btn.classList.add('wrong'); }
+    btn.classList.remove('selected');
+  });
+  const fb = document.getElementById('fb-' + qid);
+  if (earned === maxMarks) {
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `✅ Well done! You identified both correct answers (${earned}/${maxMarks}).`;
+  } else {
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `❌ You got ${earned}/${maxMarks}. The correct answers are highlighted in green.`;
+  }
+  recordScore(qid, earned, maxMarks);
+  updateHeader();
+}
+
+// ══════════════════════════════════════
+// Fill in the blanks
+// ══════════════════════════════════════
+let activeBlank = null;
+
+function useWord(chip, qid) {
+  if (chip.classList.contains('used')) return;
+  const blanks = document.querySelectorAll(`#card-1-2 .blank`);
+  // Find first empty blank
+  for (const b of blanks) {
+    if (!b.value) {
+      b.value = chip.textContent;
+      chip.classList.add('used');
+      break;
+    }
+  }
+}
+
+function checkFill(qid, blankIds) {
+  if (answered.has(qid)) return;
+  answered.add(qid);
+  let earned = 0;
+  blankIds.forEach(id => {
+    const el = document.getElementById(id);
+    el.disabled = true;
+    const correct = el.dataset.answer.toLowerCase();
+    const given = (el.value || '').trim().toLowerCase();
+    if (given === correct) { el.classList.add('correct'); earned++; }
+    else { el.classList.add('wrong'); el.value = el.value + ' (✓ ' + el.dataset.answer + ')'; }
+  });
+  const fb = document.getElementById('fb-' + qid);
+  const max = blankIds.length;
+  if (earned === max) {
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `✅ Perfect! All ${max} blanks correct.`;
+  } else {
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `❌ ${earned}/${max} correct. The correct answers are shown in the boxes.`;
+  }
+  recordScore(qid, earned, max);
+  updateHeader();
+}
+
+function resetFill(qid, blankIds) {
+  answered.delete(qid);
+  blankIds.forEach(id => {
+    const el = document.getElementById(id);
+    el.disabled = false;
+    el.value = '';
+    el.className = 'blank';
+  });
+  document.querySelectorAll('#wb-' + qid + ' .word-chip').forEach(c => c.classList.remove('used'));
+  const fb = document.getElementById('fb-' + qid);
+  fb.className = 'feedback';
+  delete scores[qid];
+  updateHeader();
+}
+
+// ══════════════════════════════════════
+// Matching
+// ══════════════════════════════════════
+const matchCorrect = { starch: 'bread', fat: 'butter', protein: 'lentils', sugar: 'honey' };
+let selectedLeft = null;
+const matchDone = {};
+
+function selectLeft(el, key) {
+  if (matchDone[key]) return;
+  document.querySelectorAll('[id^="ml-"]').forEach(e => e.classList.remove('selected-left'));
+  selectedLeft = key;
+  el.classList.add('selected-left');
+}
+
+function selectRight(el, key) {
+  if (!selectedLeft) return;
+  if (matchDone[selectedLeft]) return;
+  const leftEl = document.getElementById('ml-' + selectedLeft);
+  const correctRight = matchCorrect[selectedLeft];
+  if (key === correctRight) {
+    leftEl.classList.remove('selected-left');
+    leftEl.classList.add('matched');
+    el.classList.add('matched');
+    matchDone[selectedLeft] = true;
+    // Check if all matched
+    const total = Object.keys(matchCorrect).length;
+    const done = Object.keys(matchDone).length;
+    if (done === total) {
+      const fb = document.getElementById('fb-4-2');
+      fb.className = 'feedback correct-fb show';
+      fb.innerHTML = '✅ All matched correctly! Starch→Bread, Fat→Butter, Protein→Lentils, Sugar→Honey.';
+      if (!answered.has('4-2')) { answered.add('4-2'); recordScore('4-2', 4, 4); updateHeader(); }
+    }
+  } else {
+    leftEl.classList.add('wrong-match');
+    el.classList.add('wrong-match');
+    setTimeout(() => {
+      leftEl.classList.remove('wrong-match','selected-left');
+      el.classList.remove('wrong-match');
+    }, 900);
+  }
+  selectedLeft = null;
+}
+
+// ══════════════════════════════════════
+// Short / open answers (reveal only)
+// ══════════════════════════════════════
+const modelAnswers = {
+  '2-3': '<strong>Model answer:</strong> A hydrocarbon is a compound that contains <strong>only hydrogen and carbon atoms</strong>. (Examples: methane CH₄, propane C₃H₈.)',
+  '3-3': '<strong>Model answer:</strong> A <strong>luminous</strong> object produces its own light (e.g. the Sun, a torch bulb). A <strong>non-luminous</strong> object does not produce its own light — we see it because it reflects light from a luminous source (e.g. the Moon, a mirror).',
+  '6-3': '<strong>Model answer:</strong> The balloons would <strong>deflate</strong>. When the rubber sheet is released it springs back up, which <strong>decreases the volume</strong> inside the bell jar. This causes the <strong>pressure to increase</strong>, which pushes air out of the balloons — modelling exhalation.',
+  '7-3': '<strong>Model answer:</strong> Some moons (e.g. Titan) have an atmosphere similar to Pluto\'s, and some planets (e.g. Mercury) have no atmosphere at all. This means that <strong>having or not having an atmosphere does not distinguish a planet from a moon</strong>.',
+};
+
+function revealAnswer(qid) {
+  const fb = document.getElementById('fb-' + qid);
+  fb.className = 'feedback correct-fb show';
+  fb.innerHTML = modelAnswers[qid];
+  if (!answered.has(qid)) {
+    answered.add(qid);
+    // Self-assessed: ask user
+    recordScore(qid, null, null); // open-ended, not auto-scored
+  }
+}
+
+// ══════════════════════════════════════
+// Scoring
+// ══════════════════════════════════════
+const topicQs = {
+  't1': ['1-1','1-2','1-3'],
+  't2': ['2-1','2-2'],
+  't3': ['3-1','3-2'],
+  't4': ['4-1','4-2','4-3'],
+  't5': ['5-1','5-2','5-3'],
+  't6': ['6-1','6-2'],
+  't7': ['7-1','7-2'],
+};
+const topicNames = {
+  't1':'Plant Repro','t2':'Combustion','t3':'Light','t4':'Food & Nutrition',
+  't5':'Metals','t6':'Breathing','t7':'Earth & Space'
+};
+
+function recordScore(qid, earned, max) {
+  if (earned !== null) scores[qid] = { earned, max };
+}
+
+function getTotal() {
+  let earned = 0, max = 0;
+  Object.values(scores).forEach(s => { earned += s.earned; max += s.max; });
+  return { earned, max };
+}
+
+function updateHeader() {
+  const { earned, max } = getTotal();
+  document.getElementById('headerScore').textContent = `Score: ${earned} / ${max} marks`;
+}
+
+function updateScorePanel() {
+  const { earned, max } = getTotal();
+  document.getElementById('totalScoreDisplay').textContent = earned;
+  document.getElementById('totalScoreLabel').textContent = `out of ${max} auto-marked marks attempted`;
+  const pct = max > 0 ? Math.round(earned/max*100) : 0;
+  document.getElementById('totalScoreBar').style.width = pct + '%';
+
+  const grid = document.getElementById('topicScoresGrid');
+  grid.innerHTML = '';
+  Object.entries(topicQs).forEach(([tid, qids]) => {
+    let te = 0, tm = 0;
+    qids.forEach(q => { if (scores[q]) { te += scores[q].earned; tm += scores[q].max; } });
+    const tPct = tm > 0 ? Math.round(te/tm*100) : 0;
+    grid.innerHTML += `
+      <div class="topic-score-card">
+        <div class="ts-name">${topicNames[tid]}</div>
+        <div class="ts-val">${te}<span style="font-size:0.9rem;color:var(--muted)">/${tm}</span></div>
+        <div class="ts-bar-wrap"><div class="ts-bar" style="width:${tPct}%"></div></div>
+      </div>`;
+  });
+}
+
+function resetAll() {
+  if (!confirm('Reset all your answers and scores?')) return;
+  location.reload();
+}
+</script>
+</body>
+</html>
